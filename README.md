@@ -61,6 +61,12 @@ xcode-select --install
 pnpm install
 ```
 
+Python の依存関係をインストールします。
+
+```bash
+pip install -r requirements.txt
+```
+
 開発用のデスクトップアプリを起動します。
 
 ```bash
