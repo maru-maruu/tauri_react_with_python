@@ -19,11 +19,28 @@ fn run_python() -> Result<String, String> {
     }
 }
 
+#[tauri::command]
+fn move_mouse(dx: i32, dy: i32) -> Result<String, String> {
+    let script_path = format!("{}/mouse_move.py", env!("CARGO_MANIFEST_DIR"));
+    let output = std::process::Command::new("python3")
+        .arg(&script_path)
+        .arg(dx.to_string())
+        .arg(dy.to_string())
+        .output()
+        .map_err(|e| format!("Failed to run python3: {}", e))?;
+
+    if output.status.success() {
+        String::from_utf8(output.stdout).map_err(|e| e.to_string())
+    } else {
+        Err(String::from_utf8_lossy(&output.stderr).to_string())
+    }
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![greet, run_python])
+        .invoke_handler(tauri::generate_handler![greet, run_python, move_mouse])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

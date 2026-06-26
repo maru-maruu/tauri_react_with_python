@@ -7,6 +7,9 @@ function App() {
   const [greetMsg, setGreetMsg] = useState("");
   const [name, setName] = useState("");
   const [pythonMsg, setPythonMsg] = useState("");
+  const [mouseMoveMsg, setMouseMoveMsg] = useState("");
+  const [dx, setDx] = useState(100);
+  const [dy, setDy] = useState(0);
 
   async function greet() {
     // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
@@ -15,6 +18,15 @@ function App() {
 
   async function runPython() {
     setPythonMsg(await invoke("run_python"));
+  }
+
+  async function moveMouse() {
+    try {
+      const result = await invoke<string>("move_mouse", { dx, dy });
+      setMouseMoveMsg(result);
+    } catch (e) {
+      setMouseMoveMsg(String(e));
+    }
   }
 
   return (
@@ -54,6 +66,25 @@ function App() {
         Run Python
       </button>
       <p>{pythonMsg}</p>
+
+      <div className="row">
+        <input
+          type="number"
+          value={dx}
+          onChange={(e) => setDx(Number(e.currentTarget.value))}
+          aria-label="X移動量"
+        />
+        <input
+          type="number"
+          value={dy}
+          onChange={(e) => setDy(Number(e.currentTarget.value))}
+          aria-label="Y移動量"
+        />
+        <button type="button" onClick={moveMouse}>
+          マウス移動テスト
+        </button>
+      </div>
+      <p>{mouseMoveMsg}</p>
     </main>
   );
 }
