@@ -6,10 +6,15 @@ import "./App.css";
 function App() {
   const [greetMsg, setGreetMsg] = useState("");
   const [name, setName] = useState("");
+  const [pythonMsg, setPythonMsg] = useState("");
 
   async function greet() {
     // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
     setGreetMsg(await invoke("greet", { name }));
+  }
+
+  async function runPython() {
+    setPythonMsg(await invoke("run_python"));
   }
 
   return (
@@ -44,6 +49,11 @@ function App() {
         <button type="submit">Greet</button>
       </form>
       <p>{greetMsg}</p>
+
+      <button type="button" onClick={runPython}>
+        Run Python
+      </button>
+      <p>{pythonMsg}</p>
     </main>
   );
 }
